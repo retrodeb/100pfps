@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png">
+
+    {{ $title := "Privacy Policy - 100pfps" }}
+    {{ $description := "Privacy" }}
+    <title>{{ $title }}</title>
+    <meta name="description" content="{{ $description }}">
+    <meta name="keywords" content="Social, Meet new people, Profile, Simple social platform, Keep it simple stupid">
+    <meta property="og:title" content="{{ $title }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:image" content="https://100pfps.xyz/static/favicon.png">
+    <meta property="og:url" content="https://100pfps.xyz/privacy/">
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <header>
+        <h1>Privacy Policy</h1>
+        {{ template "navbar.html" . }}
+    </header>
+    <article>
+        <h2>What do we save about you?</h2>
+        <ul>
+            <li>The information needed to hold your profile, keep in mind it will be deleted automatically when 99 people posts their profiles after you do.</li>
+            <li>Your IP address is stored in our web server logs, these are cleaned periodically.</li>
+            <li>When you post your own profile, we save your IP address in our database, we only do this in order to control and avoid spam.</li>
+        </ul>
+
+        <h2>Further info</h2>
+        <ul>
+            <li>We don't store cookies in your web browser.</li>
+            <li>Anyone can see your profile.</li>
+            <li>Whatever that is on the website is available for everyone.</li>
+            <li>We don't sell information to third parties</li>
+        </ul>
+
+        <p>Thank you for reading our privacy policy!</p>
+    </article>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png">
+    
+    {{ $title := "100 PFPs" }}
+    {{ $description := "A passion project born as a lightweight, algorithm-free software that allows you to meet new people. There is a total of 100 profiles that can be displayed at all times." }}
+    <title>{{ $title }}</title>
+    <meta name="description" content="{{ $description }}">
+    <meta name="keywords" content="Social, Meet new people, Profile, Simple social platform, Keep it simple stupid">
+    <meta property="og:title" content="{{ $title }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:image" content="https://100pfps.xyz/static/favicon.png">
+    <meta property="og:url" content="https://100pfps.xyz/">
+    <meta property="og:type" content="website">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>100 PFPs</h1>
+        {{ template "navbar.html" . }}
+        Welcome to 100 PFPs, feel free to post your own profile here<br>
+        take care before you post anything, your profile is public and it will not be removable until the next round <a href="/details/">see details</a>
+    </header>
+    
+    {{ $admin := index . "admin" }}
+    {{ $isAdmin := $admin | ne nil }}
+    {{ $adminRole := "" }}
+    {{ if $isAdmin }}
+        {{ $adminRole = $admin.GetRoleStr }}
+    {{ end }}
+
+    <form class="filter">
+        {{ $selected_tag := index . "tag" }}
+        <select name="tag">
+            <option value="any">Any</option>
+            {{ range $tag := index . "tags" }}
+                {{ $selected := false }}
+                {{ if $selected_tag | ne nil }}
+                    {{ $selected = ($tag.Name | eq (derefStr $selected_tag)) }}
+                {{ end }}
+                <option value="{{ $tag.Name | html }}" {{ $selected | ternary "selected" "" }}>{{ $tag.Name | html }} ({{ $tag.Count }})</option>
+            {{ end }}
+        </select>
+        <button>Filter!</button>
+    </form>
+
+    <div class="board">
+        <label class="add-btn" for="form-profile__modal-toggle">+</label>
+        {{ range $profile := index . "profiles" }}
+        <div class="profile">
+            <img class="profile__img" src="data:image/webp;base64,{{ $profile.Thumbnail | base64 }}" alt="">
+            <div class="profile__tooltip">
+                <img class="profile__tooltip__img" src="data:image/webp;base64,{{ $profile.Image | base64 }}" alt="">
+                <h2 class="profile__tooltip__title">{{ $profile.Name | html }}</h2>
+                <div class="profile__tooltip__description">{{ $profile.Description | html }}</div>
+            </div>
+            <label class="modal-profile__label" for="modal-profile{{ $profile.ID }}__toggle"></label>
+        </div>
+        {{ end }}
+    </div>
+
+    <form id="form-profile" class="modal" method="POST" action="/profile/create/" enctype="multipart/form-data">
+        {{ $form := index . "form-profile-data" }}  
+        {{ $errors := index . "form-profile-errors" | valueOr strMap }}
+        {{ $hasErrors := gt (len $errors) 0 }}
+        <input type="checkbox" class="modal-toggle" name="form-profile__modal-toggle" id="form-profile__modal-toggle" {{ $hasErrors | ternary "checked" "" }}>
+        <h2>Submit your profile</h2>
+        <div class="form__error-kind error-msg">{{ index $errors "kind" | html }}</div>
+        <!-- <input type="text" name="ID" placeholder="id"> -->
+        <div class="form__entry">
+            <input type="text" placeholder="Name" name="name" maxlength="15" value="{{ $form.Name | valueOrEmpty | html }}" required>
+            <div class="error-msg">{{ index $errors "Name" | html }}</div>
+        </div>
+        <div id="form-profile__description" class="form__entry">
+            <textarea type="text" placeholder="Description, Biography, Socials..." minlength="30" maxlength="1000" name="description" required>{{ $form.Description | valueOrEmpty | html }}</textarea>
+            <div class="error-msg">{{ index $errors "Description" | html }}</div>
+        </div>
+
+        <div class="form__entry">
+            <input placeholder="#tag1 #tag2 #tag3..." type="text" name="tags" maxlength="75" value="{{ $form.Tags | valueOrEmpty | html }}" required>
+            <div class="error-msg">{{ index $errors "Tags" | html }}</div>
+        </div>
+        
+        <div id="form-profile__img" class="form__entry">
+            <input type="file" name="img" accept="image/jpeg, image/png, image/webp" required>
+            <div class="error-msg">{{ index $errors "Image" | html }}</div>
+        </div>
+
+        <div id="form-profile__terms" class="form__entry">
+            <input type="checkbox" name="rulesandprivacyaccepted" id="form-profile__terms-toggle" value="true" required><label for="form-profile__terms-toggle"> I accept <a href="/rules/">Rules</a> and <a href="/privacy/">Privacy Policy</a></label>
+        </div>
+
+        <div class="form__entry buttons">
+            <button class="active-btn" id="form-profile__submit-btn" type="submit">Upload</button>
+            <label class="btn form-profile__close" for="form-profile__modal-toggle">Close</label>
+        </div>
+    </form>
+
+    {{ range $profile := index . "profiles" }}
+        <div class="modal profile-modal">
+            <img class="profile-modal__img" src="data:image/webp;base64,{{ $profile.Image | base64 }}" alt="">
+            <h2>{{ $profile.Name | html }}</h2>
+            <div class="profile-modal__description">{{ $profile.Description | html }}</div>
+            <input type="checkbox" class="modal-toggle" id="modal-profile{{ $profile.ID }}__toggle">
+            <div class="profile-modal__tags">
+                {{ range $tag := $profile.Tags -}}
+                    <span class="profile-modal__tag">{{ $tag.Name | html }}</span>
+                {{- end }}
+            </div>
+            {{ if $isAdmin }}
+                <form action="/profile/delete/" method="post">
+                    <input name="id" value="{{ $profile.ID }}" type="hidden">
+                    <button type="submit">Delete</button>
+                </form>
+                {{ if ($adminRole | eq "Moderator") | or ($adminRole | eq "Owner") }}
+                    <form action="/profile/banip/" method="post">
+                        <input name="id" value="{{ $profile.ID }}" type="hidden">
+                        <button type="submit">Delete & Ban IP</button>
+                    </form>
+                {{ end }}
+            {{ end }}
+            <label class="btn" for="modal-profile{{ $profile.ID }}__toggle">Close</label>
+        </div>
+    {{ end }}
+    
+    {{ if $isAdmin }}
+        <div id="admin-mark">You're {{ $adminRole }}</div>
+
+        {{ if $adminRole | eq "Owner" }}
+            <label class="btn" for="form-create-admin__modal-toggle">Create Admin</label>
+            <form id="form-create-admin" class="modal" method="post" action="/admin/create/">
+                <h2>Create admin</h2>
+                <input type="checkbox" class="modal-toggle" id="form-create-admin__modal-toggle">
+                <div class="form__entry">
+                    <input type="text" name="user" placeholder="User">
+                </div>
+                <div class="form__entry">
+                    <input type="password" name="password" placeholder="Password">
+                </div>
+                <div class="form__entry">
+                    <select name="role">
+                        <option value="0">Owner</option>
+                        <option value="1">Moderator</option>
+                        <option value="2">Helper</option>
+                    </select>
+                </div>
+                <div class="buttons">
+                    <button>Create</button>
+                    <label class="btn" for="form-create-admin__modal-toggle">Close</label>
+                </div>
+            </form>
+        {{ end }}
+    {{ end }}
+
+    <!-- <button class="add-btn">+</button> -->
+    <div class="modal__shadow"></div>
+</body>
+</html>

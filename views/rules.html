@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png">
+
+    {{ $title := "Rules - 100 PFPs" }}
+    {{ $description := "Rules" }}
+    <title>{{ $title }}</title>
+    <meta name="description" content="{{ $description }}">
+    <meta name="keywords" content="Social, Meet new people, Profile, Simple social platform, Keep it simple stupid">
+    <meta property="og:title" content="{{ $title }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:image" content="https://100pfps.xyz/static/favicon.png">
+    <meta property="og:url" content="https://100pfps.xyz/rules/">
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <header>
+        <h1>Rules</h1>
+        {{ template "navbar.html" . }}
+    </header>
+    <article>
+        <p>Before posting your profile in 100pfps, you must respect our rules or you will be banned permanently.</p>
+        <h2>Our rules are the following ones:</h2>
+        <ul>
+            <li>Do not be rude or demeaning in any sort of way, this means uploading content that incites trash talking/harassment, hate speech and/or bigotry.</li>
+            <li>Do not upload content that is in any way inappropiate or risqué, such as genitalia or shock content.</li>
+            <li>Do not upload personal identifiable information (PII, as in anything that links back to a real identity) of yourself or others.</li>
+            <li>Do not to violate any US laws, including but not limited to copyright infringement, endangerment, fraud, and any other unlawful activities.</li>
+        </ul>
+
+        <p>Thank you for reading our rules!</p>
+    </article>
+</body>
+</html>

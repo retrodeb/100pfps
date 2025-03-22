@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="shortcut icon" href="/static/favicon.png" type="image/png">
+    
+    {{ $title := "Details - 100pfps" }}
+    {{ $description := "Details" }}
+    <title>{{ $title }}</title>
+    <meta name="description" content="{{ $description }}">
+    <meta name="keywords" content="Social, Meet new people, Profile, Simple social platform, Keep it simple stupid">
+    <meta property="og:title" content="{{ $title }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:image" content="https://100pfps.xyz/static/favicon.png">
+    <meta property="og:url" content="https://100pfps.xyz/details/">
+    <meta property="og:type" content="website">
+</head>
+<body>
+    <header>
+        <h1>Details</h1>
+        {{ template "navbar.html" . }}
+    </header>
+    <article>
+        <p>This is a non-profit ran project created by <a href="https://github.com/retrodeb/" target="_blank">retrodeb</a>,
+        the main idea is to post your profile here with a similar aproach to 4chan threads but using profiles.</p>
+
+        <p>This project is AGPLv3, you can visit the repository <a href="https://github.com/retrodeb/100pfps/" target="_blank">here</a>,
+        you're free to redistribute this project and create your own instances. </p>
+
+        <h2>Donations</h2>
+        <p>If you wish to support this project<br>
+        </p>
+        <h3>Bitcoin</h3>
+        <span style="word-break: break-all;">bc1qck39xfw3xwa63qmy89lpu7y40u5pfhsv9xfqhw</span>
+        <h3>Monero</h3>
+        <span style="word-break: break-all;">863jdT5tXtNTQsEzqFxph1iFKeee3vUyTLPbVBuWC5U2Cjy8ZWXT7nBFT7X2eF9bhB2xUTGE83QeuD82Z5TijM5NV2pFb1e</span>
+
+    </article>
+</body>
+</html>
